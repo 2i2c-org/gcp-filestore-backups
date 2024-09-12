@@ -1,0 +1,30 @@
+# fullnameOverride and nameOverride distinguishes blank strings, null values,
+# and non-blank strings. For more details, see the configuration reference.
+fullnameOverride: ""
+nameOverride:
+
+# enabled is ignored by the chart itself, but a chart depending on
+# the this chart conditionally can make use this config option as the
+# condition.
+enabled:
+
+# Required values for the chart
+filestoreNames: []
+project: blah
+zone: blah
+
+# Specify the image to use
+image:
+  name: quay.io/2i2c/gcp-filestore-backups
+  tag: "set-by-chartpress"
+
+serviceAccount:
+  name: ""
+  # Annotations to add to the service account
+  annotations: {}
+
+# Other config for managing the deployment
+podLabels: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

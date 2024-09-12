@@ -1,0 +1,27 @@
+{{- /* Generated with https://patorjk.com/software/taag/#p=display&f=Slant&t=gcpFilestoreBackups */}}
+                     _______ __          __                  ____             __                   
+   ____ __________  / ____(_) /__  _____/ /_____  ________  / __ )____ ______/ /____  ______  _____
+  / __ `/ ___/ __ \/ /_  / / / _ \/ ___/ __/ __ \/ ___/ _ \/ __  / __ `/ ___/ //_/ / / / __ \/ ___/
+ / /_/ / /__/ /_/ / __/ / / /  __(__  ) /_/ /_/ / /  /  __/ /_/ / /_/ / /__/ ,< / /_/ / /_/ (__  ) 
+ \__, /\___/ .___/_/   /_/_/\___/____/\__/\____/_/   \___/_____/\__,_/\___/_/|_|\__,_/ .___/____/  
+/____/    /_/                                                                       /_/            
+
+### Installation info
+
+  - Kubernetes namespace: {{ .Release.Namespace }}
+  - Helm release name:    {{ .Release.Name }}
+  - Helm chart version:   {{ .Chart.Version }}
+
+### Post-installation checklist
+
+  Verify that created Pods enter a Running state:
+
+    kubectl --namespace={{ .Release.Namespace }} get pod
+
+  If a pod is stuck with a Pending or ContainerCreating status, diagnose with:
+
+    kubectl --namespace={{ .Release.Namespace }} describe pod <name of pod>
+
+  If a pod keeps restarting, diagnose with:
+
+    kubectl --namespace={{ .Release.Namespace }} logs --previous <name of pod>
