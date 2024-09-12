@@ -55,4 +55,4 @@ jobs:
 
       - name: Push the helm chart
         run: |
-          helm push .helm-charts/gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz oci://ghcr.io/2i2c-org/gcp-filestore-backups
+          helm push gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz oci://ghcr.io/2i2c-org/gcp-filestore-backups
