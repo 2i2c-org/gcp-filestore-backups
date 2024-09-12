@@ -1,0 +1,59 @@
+name: Build and Publish Docker Images and Helm Chart
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  publish-charts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to quay.io
+        if: github.event != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install chartpress
+
+      - name: Run chartpress
+        if: github.event != 'pull_request'
+        run: chartpress --push
+
+      - name: Run chartpress (no push)
+        if: github.event == 'pull_request'
+        run: chartpress
+
+      - name: Get chart version
+        id: get-version
+        run: echo "VERSION=$(cat gcpFilestoreBackups/Chart.yaml | grep version | awl '{print $2}' )" >> $GITHUB_OUTPUT
+
+      - name: Package helm chart
+        run: |
+          helm package gcpFilestoreBackups -d .helm-charts
+
+      - name: Commit helm chart to gh-pages branch
+        if: github.event != 'pull_request'
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: .helm-charts/gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz
+          message: "Publish version ${{ steps.get-version.outputs.VERSION }} of gcpFilestoreBackups helm chart"
+          new_branch: gh-pages   
