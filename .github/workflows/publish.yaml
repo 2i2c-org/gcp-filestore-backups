@@ -13,10 +13,17 @@ jobs:
   publish-charts:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: main
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
 
       - name: Login to quay.io
         if: github.event_name != 'pull_request'
@@ -36,24 +43,32 @@ jobs:
 
       - name: Run chartpress
         if: github.event_name != 'pull_request'
+        working-directory: main
         run: chartpress --push
 
       - name: Run chartpress (no push)
         if: github.event_name == 'pull_request'
+        working-directory: main
         run: chartpress
 
       - name: Get chart version
         id: get-version
+        working-directory: main
         run: echo "VERSION=$(cat gcpFilestoreBackups/Chart.yaml | grep version | awk '{print $2}' )" >> $GITHUB_OUTPUT
 
       - name: Package helm chart
+        working-directory: main
         run: |
-          helm package gcpFilestoreBackups -d .helm-charts
+          helm package gcpFilestoreBackups
+
+      - name: Move the helm chart binary to the other checked out branch folder
+        run: |
+          mv main/gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz gh-pages/
 
       - name: Commit helm chart to gh-pages branch
         if: github.event_name != 'pull_request'
+        working-directory: gh-pages
         uses: EndBug/add-and-commit@v9
         with:
-          add: .helm-charts/gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz
+          add: gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz
           message: "Publish version ${{ steps.get-version.outputs.VERSION }} of gcpFilestoreBackups helm chart"
-          new_branch: gh-pages   
