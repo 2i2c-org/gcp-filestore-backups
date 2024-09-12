@@ -15,7 +15,7 @@ zone: blah
 
 # Specify the image to use
 image:
-  name: quay.io/2i2c/gcp-filestore-backups
+  repository: quay.io/2i2c/gcp-filestore-backups
   tag: "set-by-chartpress"
 
 serviceAccount:

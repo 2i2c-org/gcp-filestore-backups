@@ -107,17 +107,17 @@ properties:
     type: object
     additionalProperties: false
     required:
-      - name
+      - repository
       - tag
     properties:
-      name:
+      repository:
         type: string
         description: |
           The name of a publicly available Docker image to run
       tag:
         type: string
         description: |
-          A valid tag for the Docker image defined in `image.name`
+          A valid tag for the Docker image defined in `image.repository`
   podLabels:
     type: object
     additionalProperties: true
