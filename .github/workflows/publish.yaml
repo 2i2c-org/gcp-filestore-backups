@@ -9,21 +9,17 @@ on:
     branches:
       - main
 
+permissions:
+  packages: write
+
 jobs:
   publish-charts:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main branch
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          path: main
-
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
 
       - name: Login to quay.io
         if: github.event_name != 'pull_request'
@@ -43,32 +39,21 @@ jobs:
 
       - name: Run chartpress
         if: github.event_name != 'pull_request'
-        working-directory: main
         run: chartpress --push
 
       - name: Run chartpress (no push)
         if: github.event_name == 'pull_request'
-        working-directory: main
         run: chartpress
 
       - name: Get chart version
         id: get-version
-        working-directory: main
         run: echo "VERSION=$(cat gcpFilestoreBackups/Chart.yaml | grep version | awk '{print $2}' )" >> $GITHUB_OUTPUT
 
       - name: Package helm chart
-        working-directory: main
         run: |
           helm package gcpFilestoreBackups
 
-      - name: Move the helm chart binary to the other checked out branch folder
-        run: |
-          mv main/gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz gh-pages/
-
-      - name: Commit helm chart to gh-pages branch
+      - name: Push the helm chart
         if: github.event_name != 'pull_request'
-        uses: EndBug/add-and-commit@v9
-        with:
-          cwd: gh-pages
-          add: gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz
-          message: "Publish version ${{ steps.get-version.outputs.VERSION }} of gcpFilestoreBackups helm chart"
+        run: |
+          helm push gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz oci://ghcr.io/2i2c-org/gcp-filestore-backups
