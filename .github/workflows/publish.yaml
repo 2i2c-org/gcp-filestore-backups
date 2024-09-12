@@ -54,5 +54,6 @@ jobs:
           helm package gcpFilestoreBackups
 
       - name: Push the helm chart
+        if: github.event_name != 'pull_request'
         run: |
           helm push gcpFilestoreBackups-${{ steps.get-version.outputs.VERSION }}.tgz oci://ghcr.io/2i2c-org/gcp-filestore-backups
