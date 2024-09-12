@@ -39,21 +39,17 @@ jobs:
 
       - name: Run chartpress
         if: github.event_name != 'pull_request'
-        working-directory: main
         run: chartpress --push
 
       - name: Run chartpress (no push)
         if: github.event_name == 'pull_request'
-        working-directory: main
         run: chartpress
 
       - name: Get chart version
         id: get-version
-        working-directory: main
         run: echo "VERSION=$(cat gcpFilestoreBackups/Chart.yaml | grep version | awk '{print $2}' )" >> $GITHUB_OUTPUT
 
       - name: Package helm chart
-        working-directory: main
         run: |
           helm package gcpFilestoreBackups
 
