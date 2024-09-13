@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "gcpFilestoreBackups.fullname" . }}
+  name: {{ include "gcpFilestoreBackups.fullname" . | lower }}
   labels:
     {{- include "gcpFilestoreBackups.labels" . | nindent 4 }}
 spec:
