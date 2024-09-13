@@ -1,4 +1,4 @@
-name: Build and Publish Docker Images and Helm Chart
+name: Build and Publish Docker Image and Helm Chart
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 jobs:
-  publish-charts:
+  publish-chart:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
