@@ -63,7 +63,7 @@ jobs:
       - name: Install dependencies
         run: pip install chartpress
 
-      - name: Run image, push if necessary
+      - name: Build image, push if necessary
         env:
           PUBLISH: ${{ steps.publish.outputs.publish }}
         run: |
