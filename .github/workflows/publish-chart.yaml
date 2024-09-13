@@ -76,7 +76,7 @@ jobs:
           git config --global user.email "github-actions@example.local"
           git config --global user.name "GitHub Actions user"
 
-      - name: Run image, push if necessary
+      - name: Build image, push if necessary
         env:
           PUBLISH: ${{ steps.publish.outputs.publish }}
         run: |
