@@ -1,0 +1,93 @@
+name: Build and Publish Docker Image and Helm Chart
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/*"
+      - "!.github/workflows/publish-chart.yaml"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/*"
+      - "!.github/workflows/publish-chart.yaml"
+
+jobs:
+  publish-chart:
+    runs-on: ubuntu-latest
+
+    # Give explicit permission for GITHUB_TOKEN to write to this repo's gh-pages branch
+    permissions:
+      contents: write
+
+    steps:
+      - name: Decide to publish the chart or not
+        id: publish
+        shell: python
+        run : |
+          import os
+
+          publish = ""
+
+          if (
+              "${{ github.repository }}" == "2i2c-org/gcp-filestore-backups"
+              and "${{ github.event_name }}" == "push"
+              and "${{ github.event.ref }}" == "refs/heads/main"
+          ):
+              publish = "true"
+          
+          output_file = os.getenv("GITHUB_OUTPUT")
+          with open(output_file, "w") as f:
+              f.write(f"publish={publish}\n")
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          # chartpress requires full history
+          fetch-depth: 0
+
+      - name: Login to quay.io
+        if: steps.publish.outputs.publish
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install chartpress
+
+      - name: Run image, push if necessary
+        env:
+          PUBLISH: ${{ steps.publish.outputs.publish }}
+        run: |
+          CHARTPRESS_ARGS=""
+
+          if [[ "${PUBLISH}" == "true" ]]; then
+            CHARTPRESS_ARGS="--push"
+          fi
+
+          chartpress ${CHARTPRESS_ARGS}
+
+      - name: Publish helm chart with chartpress
+        if: steps.publish.outputs.publish
+        env:
+          GITHUB_TOKEN: "${{ github.token }}"
+        run: |
+          set -eux
+
+          PUBLISH_ARGS="--publish-chart --push"
+
+          PR_OR_HASH=$(git log -1 --pretty=%h-%B | head -n1 | sed 's/^.*\(#[0-9]*\).*/\1/' | sed 's/^\([0-9a-f]*\)-.*/@\1/')
+          LATEST_COMMIT_TITLE=$(git log -1 --pretty=%B | head -n1)
+          EXTRA_MESSAGE="${{ github.repository }}${PR_OR_HASH} ${LATEST_COMMIT_TITLE}"
+
+          chartpress $PUBLISH_ARGS --extra-message "${EXTRA_MESSAGE}"
+
+          git --no-pager diff --color
