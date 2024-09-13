@@ -1,6 +1,0 @@
-theme: jekyll-theme-minimal
-
-title: gcpFilestoreBackups Helm Chart repository
-description: |
-  A human friendly view of the gcpFilestoreBackups helm chart versions.
-  The command line tool helm will interact with <a href="index.yaml">index.yaml</a>.
