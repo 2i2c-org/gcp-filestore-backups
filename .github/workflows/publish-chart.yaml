@@ -7,6 +7,8 @@ on:
       - "**.md"
       - ".github/workflows/*"
       - "!.github/workflows/publish-chart.yaml"
+    branches:
+      - "main"
   pull_request:
     paths-ignore:
       - "**.md"
