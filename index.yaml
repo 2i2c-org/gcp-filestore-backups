@@ -3,6 +3,18 @@ entries:
   gcpFilestoreBackups:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2024-09-13T15:50:33.894582996Z"
+    description: Automatically create backups of multiple GCP FileStore instances
+    digest: 23c2809f88a68fbf04a962965b88f3c38ed355c8b3ad630adca556f39ff0ab32
+    name: gcpFilestoreBackups
+    sources:
+    - https://github.com/2i2c-org/gcp-filestore-backups
+    type: application
+    urls:
+    - https://2i2c.org/gcp-filestore-backups/gcpFilestoreBackups-0.0.1-0.dev.git.73.h572c402.tgz
+    version: 0.0.1-0.dev.git.73.h572c402
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-09-13T13:31:42.164983622Z"
     description: Automatically create backups of multiple GCP FileStore instances
     digest: 833962f50d9c839856c76f451c9afcd3c8d5254655c216516a4f06469857b090
@@ -85,4 +97,4 @@ entries:
     urls:
     - https://2i2c.org/gcp-filestore-backups/gcpFilestoreBackups-0.0.1-0.dev.git.53.h8b9558e.tgz
     version: 0.0.1-0.dev.git.53.h8b9558e
-generated: "2024-09-13T13:31:42.164542894Z"
+generated: "2024-09-13T15:50:33.89413587Z"
