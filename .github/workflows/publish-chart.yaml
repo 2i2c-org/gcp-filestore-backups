@@ -7,11 +7,15 @@ on:
       - "**.md"
       - ".github/workflows/*"
       - "!.github/workflows/publish-chart.yaml"
+    branches:
+      - "main"
   pull_request:
     paths-ignore:
       - "**.md"
       - ".github/workflows/*"
       - "!.github/workflows/publish-chart.yaml"
+    tags:
+      - "**"
 
 jobs:
   publish-chart:
@@ -33,9 +37,13 @@ jobs:
           if (
               "${{ github.repository }}" == "2i2c-org/gcp-filestore-backups"
               and "${{ github.event_name }}" == "push"
-              and "${{ github.event.ref }}" == "refs/heads/main"
+              and (
+                  "${{ github.event.ref }}" == "refs/heads/main"
+                  or "${{ github.event.ref }}".startswith("refs/tags/")
+              )
           ):
               publish = "true"
+              print("Publishing chart")
           
           output_file = os.getenv("GITHUB_OUTPUT")
           with open(output_file, "w") as f:
@@ -63,7 +71,12 @@ jobs:
       - name: Install dependencies
         run: pip install chartpress
 
-      - name: Run image, push if necessary
+      - name: Configure a git user
+        run: |
+          git config --global user.email "github-actions@example.local"
+          git config --global user.name "GitHub Actions user"
+
+      - name: Build image, push if necessary
         env:
           PUBLISH: ${{ steps.publish.outputs.publish }}
         run: |
@@ -84,10 +97,14 @@ jobs:
 
           PUBLISH_ARGS="--publish-chart --push"
 
-          PR_OR_HASH=$(git log -1 --pretty=%h-%B | head -n1 | sed 's/^.*\(#[0-9]*\).*/\1/' | sed 's/^\([0-9a-f]*\)-.*/@\1/')
-          LATEST_COMMIT_TITLE=$(git log -1 --pretty=%B | head -n1)
-          EXTRA_MESSAGE="${{ github.repository }}${PR_OR_HASH} ${LATEST_COMMIT_TITLE}"
+          if [[ $GITHUB_REF != refs/tags/* ]]; then
+              PR_OR_HASH=$(git log -1 --pretty=%h-%B | head -n1 | sed 's/^.*\(#[0-9]*\).*/\1/' | sed 's/^\([0-9a-f]*\)-.*/@\1/')
+              LATEST_COMMIT_TITLE=$(git log -1 --pretty=%B | head -n1)
+              EXTRA_MESSAGE="${{ github.repository }}${PR_OR_HASH} ${LATEST_COMMIT_TITLE}"
 
-          chartpress $PUBLISH_ARGS --extra-message "${EXTRA_MESSAGE}"
+              chartpress $PUBLISH_ARGS --extra-message "${EXTRA_MESSAGE}"
+          else
+              chartpress $PUBLISH_ARGS --tag "${GITHUB_REF:10}"
+          fi
 
           git --no-pager diff --color
