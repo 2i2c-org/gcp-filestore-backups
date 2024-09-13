@@ -63,7 +63,12 @@ jobs:
       - name: Install dependencies
         run: pip install chartpress
 
-      - name: Run image, push if necessary
+      - name: Configure a git user
+        run: |
+          git config --global user.name "GitHub Actions user"
+          git config --global user.email "github-actions@example.local"
+
+      - name: Build image, push if necessary
         env:
           PUBLISH: ${{ steps.publish.outputs.publish }}
         run: |
