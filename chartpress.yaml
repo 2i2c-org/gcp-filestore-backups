@@ -13,6 +13,7 @@ charts:
     imagePrefix: quay.io/2i2c/
     repo:
       git: 2i2c-org/gcp-filestore-backups
+      published: "https://2i2c.org/gcp-filestore-backups"
     images:
       gcp-filestore-backups:
         valuesPath: image
