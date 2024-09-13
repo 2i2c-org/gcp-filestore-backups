@@ -55,7 +55,7 @@ Create the name of the service account to use
 */}}
 {{- define "gcpFilestoreBackups.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "gcpFilestoreBackups.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "gcpFilestoreBackups.fullname" . | lower ) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
