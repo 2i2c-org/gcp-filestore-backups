@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "gcpFilestoreBackups.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default .Chart.Name .Values.nameOverride | lower | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -46,7 +46,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "gcpFilestoreBackups.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "gcpFilestoreBackups.name" . }}
+app.kubernetes.io/name: {{ include "gcpFilestoreBackups.name" . | lower }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
