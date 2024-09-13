@@ -25,7 +25,7 @@ spec:
       serviceAccountName: {{ include "gcpFilestoreBackups.serviceAccountName" . }}
       automountServiceAccountToken: False
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name | lower }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command:
             - python
