@@ -96,9 +96,9 @@ properties:
         description: |
           Dictionary of annotations that can be applied to the service account.
 
-              When used with GKE and Workload Identity, you need to set the
-              annotation with the key "iam.gke.io/gcp-service-account" to the email
-              address of the Google Service Account whose credentials it should have.
+          When used with GKE and Workload Identity, you need to set the
+          annotation with the key "iam.gke.io/gcp-service-account" to the email
+          address of the Google Service Account whose credentials it should have.
       name:
         type: string
         description: |
