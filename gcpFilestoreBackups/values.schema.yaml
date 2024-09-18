@@ -16,7 +16,7 @@ required:
   - zone
   - serviceAccount
 properties:
-  enabled: 
+  enabled:
     type: [boolean, "null"]
     description: |
       `enabled` is ignored by the chart itself, but a chart depending on this one
@@ -146,7 +146,7 @@ properties:
 
       See [the Kubernetes
       documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
-      for more details.     
+      for more details.
   tolerations:
     type: array
     description: |

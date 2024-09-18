@@ -28,11 +28,12 @@ def get_existing_backups(
         project (str): The GCP project the filestore is located in
         region (str): The region the filestore is located in, e.g., us-central1
         filestore_name (str): The name of the filestore instance
-        filestore_share_name (str): The name of the share on the filestore instance
+        filestore_share_name (str): The name of the share on the filestore
+            instance
 
     Returns:
-        list(dict): A JSON-like object, where each dict-entry in the list describes
-            an existing backup of the filestore
+        list(dict): A JSON-like object, where each dict-entry in the list
+            describes an existing backup of the filestore
     """
     # Get all existing backups in the selected project and region
     backups = subprocess.check_output(
@@ -51,7 +52,7 @@ def get_existing_backups(
 
     # Filter returned backups by filestore and share names
     backups = jmespath.search(
-        f"[?sourceFileShare == '{filestore_share_name}' && contains(sourceInstance, '{filestore_name}')]",
+        f"[?sourceFileShare == '{filestore_share_name}' && contains(sourceInstance, '{filestore_name}')]",  # noqa: E501
         backups,
     )
 
@@ -83,8 +84,8 @@ def filter_backups_into_recent_and_old(
     Args:
         backups (list(dict)): A JSON-like object defining the existing backups
             for the filestore and share we care about
-        retention_days (int): The number of days above which a backup is considered
-            to be out of date
+        retention_days (int): The number of days above which a backup is
+            considered to be out of date
         backup_freq_days (int, optional): The time period in days for which we
             create a backup. Defaults to 1 (ie. daily backups).
 
@@ -94,14 +95,16 @@ def filter_backups_into_recent_and_old(
         old_backups (list(dict)): A JSON-like object containing all existing
             backups with a `createTime` older than our retention window
     """
-    # Generate a list of filestore backups that are younger than our backup window
+    # Generate a list of filestore backups that are younger than our backup
+    # window
     recent_backups = [
         backup
         for backup in backups
         if datetime.now() - backup["createTime"] < timedelta(days=backup_freq_days)
     ]
 
-    # Generate a list of filestore backups that are older than our set retention period
+    # Generate a list of filestore backups that are older than our set
+    # retention period
     old_backups = [
         backup
         for backup in backups
@@ -109,7 +112,7 @@ def filter_backups_into_recent_and_old(
     ]
     if len(old_backups) > 0:
         print(
-            f"Filestore backups older than {retention_days} days have been found. They will be deleted."
+            f"Filestore backups older than {retention_days} days have been found. They will be deleted."  # noqa: E501
         )
 
     return recent_backups, old_backups
@@ -123,20 +126,22 @@ def create_backup_if_necessary(
     region: str,
     zone: str,
 ):
-    """If no recent backups have been found, create a new backup using the gcloud CLI
+    """If no recent backups have been found, create a new backup using the
+    gcloud CLI
 
     Args:
         backups (list(dict)): A JSON-like object containing details of recently
             created backups
         filestore_name (str): The name of the Filestore instance to backup
-        filestore_share_name (str): The name of the share on the Filestore to backup
+        filestore_share_name (str): The name of the share on the Filestore to
+            backup
         project (str): The GCP project within which to create a backup
         region (str): The GCP region to create the backup in, e.g. us-central1
         zone (str): The GCP zone to create the backup in, e.g. us-central1-b
     """
     if len(backups) == 0:
         print(
-            f"There have been no recent backups of the filestore for project {project}. Creating a backup now..."
+            f"There have been no recent backups of the filestore for project {project}. Creating a backup now..."  # noqa: E501
         )
 
         subprocess.check_call(
@@ -145,20 +150,20 @@ def create_backup_if_necessary(
                 "filestore",
                 "backups",
                 "create",
-                f"{filestore_name}-{filestore_share_name}-backup-{datetime.now().strftime('%Y-%m-%d')}",
+                f"{filestore_name}-{filestore_share_name}-backup-{datetime.now().strftime('%Y-%m-%d')}",  # noqa: E501
                 f"--file-share={filestore_share_name}",
                 f"--instance={filestore_name}",
                 f"--instance-zone={zone}",
                 f"--region={region}",
-                # This operation can take a long time to complete and will only take
-                # longer as filestores grow, hence we use the `--async` flag to
-                # return immediately, without waiting for the operation in progress
-                # to complete. Given that we only expect to be creating a backup
-                # once a day, this feels safe enough to try for now.
-                # The `gcloud filestore backups list` command is instantaneously
-                # populated with new backups, even if they are not done creating.
-                # So we don't have to worry about the async flag not taking those
-                # into account.
+                # This operation can take a long time to complete and will only
+                # take longer as filestores grow, hence we use the `--async`
+                # flag to return immediately, without waiting for the operation
+                # in progress to complete. Given that we only expect to be
+                # creating a backup once a day, this feels safe enough to try
+                # for now. The `gcloud filestore backups list` command is
+                # instantaneously populated with new backups, even if they are
+                # not done creating. So we don't have to worry about the async
+                # flag not taking those into account.
                 "--async",
             ]
         )
@@ -198,7 +203,9 @@ def main(args):
             args.project, region, filestore_name, args.filestore_share_name
         )
         recent_filestore_backups, old_filestore_backups = (
-            filter_backups_into_recent_and_old(filestore_backups, args.retention_days, args.backup_freq_days)
+            filter_backups_into_recent_and_old(
+                filestore_backups, args.retention_days, args.backup_freq_days
+            )
         )
         create_backup_if_necessary(
             recent_filestore_backups,
@@ -213,8 +220,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""Uses the gcloud CLI to check for existing backups of a GCP
-        Filestore, creates a new backup if necessary, and deletes outdated backups
+        description="""Uses the gcloud CLI to check for existing backups of a
+        GCP Filestore, creates a new backup if necessary, and deletes outdated
+        backups
         """
     )
 
@@ -235,13 +243,7 @@ if __name__ == "__main__":
     )
 
     # NOTE: We assume that the share name will be homes on all GCP filestores
-    #       right now, which is a safe assumption given that this is not configurable
-    #       in our terraform code:
-    #
-    #           https://github.com/2i2c-org/infrastructure/blob/HEAD/terraform/gcp/storage.tf
-    #
-    #       We should change this if that value becomes configurable.
-    #
+    #       right now.
     parser.add_argument(
         "--filestore-share-name",
         type=str,
@@ -258,7 +260,7 @@ if __name__ == "__main__":
         "--back-freq-days",
         type=int,
         default=1,
-        help="The frequency, in days, of how regularly backups are made. Default: 1 day."
+        help="How regularly, in days, backups are made. Default: 1 day.",
     )
 
     args = parser.parse_args()
