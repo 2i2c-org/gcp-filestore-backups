@@ -107,6 +107,10 @@ properties:
     type: integer
     description: |
       The number of days to retain backups for
+  backupFreqDays:
+    type: integer
+    description: |
+      How frequently, in days, a backup should be made
   image:
     type: object
     additionalProperties: false

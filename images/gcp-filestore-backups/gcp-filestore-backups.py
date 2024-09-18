@@ -72,11 +72,11 @@ def get_existing_backups(
 
 
 def filter_backups_into_recent_and_old(
-    backups: list, retention_days: int, day_freq: int = 1
+    backups: list, retention_days: int, backup_freq_days: int
 ):
     """Filter the list of backups into two groups:
     - Recently created backups that were created within our backup window,
-      defined by day_freq
+      defined by backup_freq_days
     - Out of date back ups that are older than our retention window, defined by
       retention days
 
@@ -85,10 +85,8 @@ def filter_backups_into_recent_and_old(
             for the filestore and share we care about
         retention_days (int): The number of days above which a backup is considered
             to be out of date
-        day_freq (int, optional): The time period in days for which we create a
-            backup. Defaults to 1 (ie. daily backups). NOTE: The frequency at
-            which we make backups is not yet configurable on the command line,
-            but could be if required.
+        backup_freq_days (int, optional): The time period in days for which we
+            create a backup. Defaults to 1 (ie. daily backups).
 
     Returns:
         recent_backups (list(dict)): A JSON-like object containing all existing
@@ -100,7 +98,7 @@ def filter_backups_into_recent_and_old(
     recent_backups = [
         backup
         for backup in backups
-        if datetime.now() - backup["createTime"] < timedelta(days=day_freq)
+        if datetime.now() - backup["createTime"] < timedelta(days=backup_freq_days)
     ]
 
     # Generate a list of filestore backups that are older than our set retention period
@@ -200,7 +198,7 @@ def main(args):
             args.project, region, filestore_name, args.filestore_share_name
         )
         recent_filestore_backups, old_filestore_backups = (
-            filter_backups_into_recent_and_old(filestore_backups, args.retention_days)
+            filter_backups_into_recent_and_old(filestore_backups, args.retention_days, args.backup_freq_days)
         )
         create_backup_if_necessary(
             recent_filestore_backups,
@@ -255,6 +253,12 @@ if __name__ == "__main__":
         type=int,
         default=5,
         help="The number of days to store backups for. Default: 5 days.",
+    )
+    parser.add_argument(
+        "--back-freq-days",
+        type=int,
+        default=1,
+        help="The frequency, in days, of how regularly backups are made. Default: 1 day."
     )
 
     args = parser.parse_args()

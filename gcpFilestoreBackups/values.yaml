@@ -24,6 +24,7 @@ serviceAccount:
   annotations: {}
 
 retentionDays: 5
+backupFreqDays: 1
 
 # Other config for managing the deployment
 podLabels: {}

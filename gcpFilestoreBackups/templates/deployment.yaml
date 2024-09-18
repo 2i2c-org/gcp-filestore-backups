@@ -37,6 +37,7 @@ spec:
             - '{{ .Values.project | required "project is required" }}'
             - '{{ .Values.zone | required "zone is required" }}'
             - --retention-days '{{ .Values.retentionDays }}'
+            - --backup-freq-days '{{ .Values.backupFreqDays }}'
           securityContext:
             runAsUser: 1000
             allowPrivilegeEscalation: False
