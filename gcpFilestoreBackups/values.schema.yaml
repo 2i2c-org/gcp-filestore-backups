@@ -16,7 +16,7 @@ required:
   - zone
   - serviceAccount
 properties:
-  enabled: 
+  enabled:
     type: [boolean, "null"]
     description: |
       `enabled` is ignored by the chart itself, but a chart depending on this one
@@ -96,13 +96,21 @@ properties:
         description: |
           Dictionary of annotations that can be applied to the service account.
 
-              When used with GKE and Workload Identity, you need to set the
-              annotation with the key "iam.gke.io/gcp-service-account" to the email
-              address of the Google Service Account whose credentials it should have.
+          When used with GKE and Workload Identity, you need to set the
+          annotation with the key "iam.gke.io/gcp-service-account" to the email
+          address of the Google Service Account whose credentials it should have.
       name:
         type: string
         description: |
           Provide a custom name for the service account
+  retentionDays:
+    type: integer
+    description: |
+      The number of days to retain backups for
+  backupFreqDays:
+    type: integer
+    description: |
+      How frequently, in days, a backup should be made
   image:
     type: object
     additionalProperties: false
@@ -138,7 +146,7 @@ properties:
 
       See [the Kubernetes
       documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector)
-      for more details.     
+      for more details.
   tolerations:
     type: array
     description: |
