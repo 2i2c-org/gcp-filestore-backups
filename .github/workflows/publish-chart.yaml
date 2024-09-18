@@ -29,7 +29,7 @@ jobs:
       - name: Decide to publish the chart or not
         id: publish
         shell: python
-        run : |
+        run: |
           import os
 
           publish = ""
@@ -44,7 +44,7 @@ jobs:
           ):
               publish = "true"
               print("Publishing chart")
-          
+
           output_file = os.getenv("GITHUB_OUTPUT")
           with open(output_file, "w") as f:
               f.write(f"publish={publish}\n")
@@ -66,7 +66,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install dependencies
         run: pip install chartpress
