@@ -103,6 +103,10 @@ properties:
         type: string
         description: |
           Provide a custom name for the service account
+  retentionDays:
+    type: integer
+    description: |
+      The number of days to retain backups for
   image:
     type: object
     additionalProperties: false

@@ -23,6 +23,8 @@ serviceAccount:
   # Annotations to add to the service account
   annotations: {}
 
+retentionDays: 5
+
 # Other config for managing the deployment
 podLabels: {}
 nodeSelector: {}

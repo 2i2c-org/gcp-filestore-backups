@@ -254,7 +254,7 @@ if __name__ == "__main__":
         "--retention-days",
         type=int,
         default=5,
-        help="The number of days to store backups for",
+        help="The number of days to store backups for. Default: 5 days.",
     )
 
     args = parser.parse_args()
