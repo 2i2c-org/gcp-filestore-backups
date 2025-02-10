@@ -34,7 +34,7 @@ spec:
             - --filestore-name={{ .Values.filestoreName | required "filestoreName is required" }}
             - --project={{ .Values.project | required "project is required" }}
             - --zone={{ .Values.zone | required "zone is required" }}
-            - --retention-days-={{ .Values.retentionDays }}
+            - --retention-days={{ .Values.retentionDays }}
             - --backup-freq-days={{ .Values.backupFreqDays }}
           securityContext:
             runAsUser: 1000
