@@ -221,7 +221,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    logger.info(f"command that was run: {sys.argv()}")
+    logger.info(f"command that was run: {sys.argv}")
 
     parser = argparse.ArgumentParser(
         description="""Uses the gcloud CLI to check for existing backups of a
