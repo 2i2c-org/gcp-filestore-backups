@@ -31,17 +31,11 @@ spec:
             - python
             - gcp-filestore-backups.py
           args:
-            {{- range .Values.filestoreNames | required "filestoreNames is required" }}
-            - '{{ . }}'
-            {{- end }}
-            - --project {{ .Values.project | required "project is required" }}
-            - --zone {{ .Values.zone | required "zone is required" }}
-            {{- if .Values.retentionDays }}
-            - --retention-days {{ .Values.retentionDays }}
-            {{- end }}
-            {{- if .Values.backupFreqDays }}
-            - --backup-freq-days {{ .Values.backupFreqDays }}
-            {{- end }}
+            - --filestore-name={{ .Values.filestoreName | required "filestoreName is required" }}
+            - --project={{ .Values.project | required "project is required" }}
+            - --zone={{ .Values.zone | required "zone is required" }}
+            - --retention-days-={{ .Values.retentionDays }}
+            - --backup-freq-days={{ .Values.backupFreqDays }}
           securityContext:
             runAsUser: 1000
             allowPrivilegeEscalation: False

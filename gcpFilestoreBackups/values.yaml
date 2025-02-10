@@ -9,7 +9,7 @@ nameOverride:
 enabled:
 
 # Required values for the chart
-filestoreNames: []
+filestoreName: blah
 project: blah
 zone: blah
 
@@ -23,8 +23,8 @@ serviceAccount:
   # Annotations to add to the service account
   annotations: {}
 
-retentionDays:
-backupFreqDays:
+retentionDays: 5
+backupFreqDays: 1
 
 # Other config for managing the deployment
 podLabels: {}
