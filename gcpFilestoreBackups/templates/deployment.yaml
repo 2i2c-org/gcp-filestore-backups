@@ -38,7 +38,7 @@ spec:
             - '{{ .Values.zone | required "zone is required" }}'
             {{- if .Values.retentionDays }}
             - '--retention-days {{ .Values.retentionDays }}'
-            {{- end - }}
+            {{- end }}
             {{- if .Values.backupFreqDays }}
             - '--backup-freq-days {{ .Values.backupFreqDays }}'
             {{- end }}
