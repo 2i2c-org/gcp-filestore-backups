@@ -39,7 +39,7 @@ spec:
             {{ if .Values.retentionDays }}
             - '--retention-days {{ .Values.retentionDays }}'
             {{- end -}}
-            {{ if .Values.backupFreqDays}}
+            {{ if .Values.backupFreqDays }}
             - '--backup-freq-days {{ .Values.backupFreqDays }}'
             {{- end -}}
           securityContext:
