@@ -200,24 +200,23 @@ def delete_old_backups(backups: list, region: str):
 def main(args):
     region = extract_region_from_zone(args.zone)
 
-    for filestore_name in args.filestore_names:
-        filestore_backups = get_existing_backups(
-            args.project, region, filestore_name, args.filestore_share_name
+    filestore_backups = get_existing_backups(
+        args.project, region, args.filestore_name, args.filestore_share_name
+    )
+    recent_filestore_backups, old_filestore_backups = (
+        filter_backups_into_recent_and_old(
+            filestore_backups, args.retention_days, args.backup_freq_days
         )
-        recent_filestore_backups, old_filestore_backups = (
-            filter_backups_into_recent_and_old(
-                filestore_backups, args.retention_days, args.backup_freq_days
-            )
-        )
-        create_backup_if_necessary(
-            recent_filestore_backups,
-            filestore_name,
-            args.filestore_share_name,
-            args.project,
-            region,
-            args.zone,
-        )
-        delete_old_backups(old_filestore_backups, region)
+    )
+    create_backup_if_necessary(
+        recent_filestore_backups,
+        args.filestore_name,
+        args.filestore_share_name,
+        args.project,
+        region,
+        args.zone,
+    )
+    delete_old_backups(old_filestore_backups, region)
 
 
 if __name__ == "__main__":
@@ -231,9 +230,9 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "filestore_names",
-        nargs="+",
-        help="The name of one or more GCP Filestores to backup",
+        "--filestore-name",
+        type=str,
+        help="The name of the GCP Filestore to backup",
     )
     parser.add_argument(
         "--project",
@@ -247,7 +246,7 @@ if __name__ == "__main__":
     )
 
     # NOTE: We assume that the share name will be homes on all GCP filestores
-    #       right now.
+    #       right now. This argument is not currently exposed via the helm chart.
     parser.add_argument(
         "--filestore-share-name",
         type=str,
@@ -257,14 +256,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--retention-days",
         type=int,
-        default=5,
-        help="The number of days to store backups for. Default: 5 days.",
+        help="The number of days to store backups for",
     )
     parser.add_argument(
-        "--back-freq-days",
+        "--backup-freq-days",
         type=int,
-        default=1,
-        help="How regularly, in days, backups are made. Default: 1 day.",
+        help="How regularly, in days, backups are made",
     )
 
     args = parser.parse_args()

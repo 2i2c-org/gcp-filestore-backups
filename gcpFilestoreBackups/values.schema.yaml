@@ -70,18 +70,18 @@ properties:
     type: [string, "null"]
     description: |
       See documentation under [`fullnameOverride`](schema_fullnameOverride).
-  filestoreNames:
-    type: array
+  filestoreName:
+    type: string
     description: |
-      The name of one or more GCP FileStore instances to backup
+      The name of the GCP Filestore instances to backup
   project:
     type: string
     description: |
-      The GCP project the FileStore and backups are stored in
+      The GCP project the Filestore and backups are stored in
   zone:
     type: string
     description: |
-      The GCP zone the FileStore and backups are stored in, e.g., us-central1-b
+      The GCP zone the Filestore and backups are stored in, e.g., us-central1-b
   serviceAccount:
     type: object
     additionalProperties: false
@@ -106,11 +106,11 @@ properties:
   retentionDays:
     type: integer
     description: |
-      The number of days to retain backups for
+      The number of days to retain backups for. Default is 5 days.
   backupFreqDays:
     type: integer
     description: |
-      How frequently, in days, a backup should be made
+      How frequently, in days, a backup should be made. Default is daily (1).
   image:
     type: object
     additionalProperties: false
