@@ -236,12 +236,12 @@ if __name__ == "__main__":
         help="The name of one or more GCP Filestores to backup",
     )
     parser.add_argument(
-        "project",
+        "--project",
         type=str,
         help="The GCP project the Filestore belongs to",
     )
     parser.add_argument(
-        "zone",
+        "--zone",
         type=str,
         help="The GCP zone the Filestore is deployed in, e.g. us-central1-b",
     )

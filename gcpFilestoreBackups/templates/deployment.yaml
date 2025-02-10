@@ -34,13 +34,13 @@ spec:
             {{- range .Values.filestoreNames | required "filestoreNames is required" }}
             - '{{ . }}'
             {{- end }}
-            - '{{ .Values.project | required "project is required" }}'
-            - '{{ .Values.zone | required "zone is required" }}'
+            - --project {{ .Values.project | required "project is required" }}
+            - --zone {{ .Values.zone | required "zone is required" }}
             {{- if .Values.retentionDays }}
-            - --retention-days '{{ .Values.retentionDays }}'
+            - --retention-days {{ .Values.retentionDays }}
             {{- end }}
             {{- if .Values.backupFreqDays }}
-            - --backup-freq-days '{{ .Values.backupFreqDays }}'
+            - --backup-freq-days {{ .Values.backupFreqDays }}
             {{- end }}
           securityContext:
             runAsUser: 1000
