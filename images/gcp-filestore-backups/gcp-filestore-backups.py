@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 
 import jmespath
+from loguru import logger
 
 
 def extract_region_from_zone(zone: str):
@@ -111,7 +112,7 @@ def filter_backups_into_recent_and_old(
         if datetime.now() - backup["createTime"] > timedelta(days=retention_days)
     ]
     if len(old_backups) > 0:
-        print(
+        logger.info(
             f"Filestore backups older than {retention_days} days have been found. They will be deleted."  # noqa: E501
         )
 
@@ -140,7 +141,7 @@ def create_backup_if_necessary(
         zone (str): The GCP zone to create the backup in, e.g. us-central1-b
     """
     if len(backups) == 0:
-        print(
+        logger.info(
             f"There have been no recent backups of the filestore for project {project}. Creating a backup now..."  # noqa: E501
         )
 
@@ -168,7 +169,7 @@ def create_backup_if_necessary(
             ]
         )
     else:
-        print("Recent backup found.")
+        logger.info("Recent backup found.")
 
 
 def delete_old_backups(backups: list, region: str):
@@ -192,7 +193,7 @@ def delete_old_backups(backups: list, region: str):
                 ]
             )
     else:
-        print("No outdated backups found.")
+        logger.info("No outdated backups found.")
 
 
 def main(args):
@@ -264,6 +265,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+    logger.info(f"Parsed arguments: {vars(args)}")
 
     while True:
         main(args)
