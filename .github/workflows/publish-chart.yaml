@@ -9,13 +9,13 @@ on:
       - "!.github/workflows/publish-chart.yaml"
     branches:
       - "main"
+    tags:
+      - "**"
   pull_request:
     paths-ignore:
       - "**.md"
       - ".github/workflows/*"
       - "!.github/workflows/publish-chart.yaml"
-    tags:
-      - "**"
 
 jobs:
   publish-chart:
