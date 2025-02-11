@@ -3,5 +3,5 @@ name: gcpFilestoreBackups
 description: Automatically create backups of multiple GCP FileStore instances
 type: application
 version: 0.0.1-set.by.chartpress
-appVersion: "1.16.0"
+appVersion: "0.0.1"
 sources: [https://github.com/2i2c-org/gcp-filestore-backups]
